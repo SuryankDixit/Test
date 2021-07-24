@@ -21,7 +21,7 @@
         $databse='users';
         $conn = mysqli_connect($servername,$username,$password,$databse);
 
-        $sql = "CREATE TABLE `users`.`users` ( `sno` INT NOT NULL AUTO_INCREMENT ,  `username` VARCHAR(15) NOT NULL UNIQUE,  `password` VARCHAR(40) NOT NULL ,  `dt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,    PRIMARY KEY  (`sno`))";
+        $sql = "CREATE TABLE `users`.`users` ( `sno` INT NOT NULL AUTO_INCREMENT ,  `username` VARCHAR(15) NOT NULL UNIQUE,  `password` VARCHAR(255) NOT NULL ,  `dt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,    PRIMARY KEY  (`sno`))";
         $status = mysqli_query($conn,$sql);
         // if($status){
         //     echo("Table cretaed succesfully");
@@ -35,7 +35,10 @@
         $cnt = mysqli_num_rows($result);
 
         if($pass===$passc && $cnt===0){
-            $sql = "INSERT INTO `users` (`username`, `password`) VALUES ('$name' ,'$pass')";
+            // generate hash:
+            $hash = password_hash($pass,PASSWORD_DEFAULT);
+
+            $sql = "INSERT INTO `users` (`username`, `password`) VALUES ('$name' ,'$hash')";
             $status = mysqli_query($conn,$sql);
             if($status){
                 $show_alert=true;
@@ -80,15 +83,15 @@
         <form action="/learnphp/LoginSystem/signup.php" method="post">
             <div class="form-group">
                 <label for="name">Name</label>
-                <input type="text" name="name" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Enter Name">
+                <input type="text" maxlength="11" name="name" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Enter Name">
             </div>
             <div class="form-group">
                 <label for="pass">Password</label>
-                <input type="password" name="pass" id="pass" class="form-control" placeholder="Enter Password">
+                <input type="password" maxlength="30"name="pass" id="pass" class="form-control" placeholder="Enter Password">
             </div>
             <div class="form-group">
                 <label for="passc">Confirm Password</label>
-                <input type="password" name="passc" id="passc" class="form-control" placeholder="Confirm Password">
+                <input type="password" maxlength="30" name="passc" id="passc" class="form-control" placeholder="Confirm Password">
             </div>
             <button type="submit" class="btn btn-primary">SignUp</button>
         </form>
