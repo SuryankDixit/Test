@@ -20,7 +20,7 @@
         $databse='users';
         $conn = mysqli_connect($servername,$username,$password,$databse);
 
-        $sql = "CREATE TABLE `users`.`users` ( `sno` INT NOT NULL AUTO_INCREMENT ,  `username` VARCHAR(15) NOT NULL UNIQUE ,  `password` VARCHAR(40) NOT NULL ,  `dt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,    PRIMARY KEY  (`sno`))";
+        $sql = "CREATE TABLE `users`.`users` ( `sno` INT NOT NULL AUTO_INCREMENT ,  `username` VARCHAR(255) NOT NULL UNIQUE ,  `password` VARCHAR(40) NOT NULL ,  `dt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,    PRIMARY KEY  (`sno`))";
         $status = mysqli_query($conn,$sql);
         // if($status){
         //     echo("Table cretaed succesfully");
@@ -29,19 +29,23 @@
         // }
 
         
-        $sql="SELECT * FROM users where username= '$name' and `password`='$pass' ";
+
+        // $sql="SELECT * FROM users where username= '$name' and `password`='$pass' ";
+        $sql="SELECT * FROM users where username= '$name'";
         $result = mysqli_query($conn,$sql);
         $cnt = mysqli_num_rows($result);
-        if($cnt==1){
-            $show_alert="You are logged in";
-
-            session_start();
-            $_SESSION['loggedin']=true;
-            $_SESSION['username']=$name;
-            header("location: welcome.php");
-
-        }else{
-            $show_error="Invalid Credentials";
+        if($cnt==1){  
+            while($row = mysqli_fetch_assoc($result)){
+                if(password_verify($pass,$row['password'])){
+                    $show_alert="You are logged in";
+                    session_start();
+                    $_SESSION['loggedin']=true;
+                    $_SESSION['username']=$name;
+                    header("location: welcome.php");
+                }else{
+                    $show_error="Invalid Credentials";
+                }
+            }
         }
     }
 ?>
